@@ -1,50 +1,53 @@
-# LITESTREAM TV
+# LITESTREAM TV — Liquid Glass build
 
-A native Android TV starter based on the supplied LITESTREAM Space Gray & Powder Blue HTML design. It uses Kotlin, Jetpack Compose, TV-friendly focusable controls, AndroidX Media3, and a GitHub Actions debug APK workflow.
+Native Android TV starter app built with Kotlin, Jetpack Compose, and AndroidX Media3.
 
-## Current implementation
+## Implemented in this version
 
-- Native TV-style navigation: Home, Movies, TV Shows, Search, My Library, Settings.
-- Demo catalog inspired by the supplied HTML categories and titles.
-- Detail screen, in-memory bookmark interaction, search, three appearance themes.
-- Media3 player wiring for a configured direct media URL.
-- Android TV launcher intent and banner/icon resources.
-- GitHub Actions build/test workflow that uploads a debug APK artifact.
+- Liquid-glass-inspired TV UI with translucent gradient panels, reflective borders, D-pad focus states, and Space Gray / AMOLED Black / Deep Ocean themes.
+- Add-on manager for installing and removing Stremio-compatible `manifest.json` URLs.
+- Reads add-on manifest metadata and declared catalogs, then requests `/catalog/{type}/{id}.json` and displays returned meta previews/posters.
+- Local title search over the catalogs currently loaded in the app.
+- Requests `/stream/{type}/{id}.json` from installed compatible add-ons and displays direct HTTP/HTTPS stream URLs returned by those add-ons.
+- Media3 player with HLS and DASH modules, progressive HTTP/HTTPS playback, request headers from Stremio `behaviorHints.proxyHeaders.request`, built-in controls, and track selection when exposed by the media.
+- Installed add-ons and saved library IDs are stored locally on the device.
+- GitHub Actions builds a debug APK and uploads it as an artifact.
 
-## Important limitations
+## Build an APK
 
-The HTML source uses sample catalog metadata and generates mock stream specifications rather than resolving actual playable stream URLs. This native starter deliberately does not invent stream URLs. The demo items are not playable until a legitimate, compatible `playbackUrl` is supplied by a provider or configured for a title. Provider manifest installation, durable Room/DataStore persistence, real metadata APIs, Trakt OAuth, subtitles UI, and watch-progress restoration remain follow-up implementation work; do not treat those as completed features.
+1. Push the repository to GitHub.
+2. Open **Actions** → **Build LITESTREAM TV APK** → **Run workflow**.
+3. Download the `LitestreamTV-debug-apk` artifact from a successful workflow run.
 
-Poster blocks are local stylized placeholders in this starter. The original HTML is preserved as `source-design.html` for reference.
+## Install an add-on
 
-## Build in GitHub Actions
+1. Open **Add-ons** in the app.
+2. Paste the full URL to an add-on's `manifest.json` (for example, `https://addon.example/manifest.json`).
+3. Choose **Install add-on**. The app fetches the manifest and then loads the catalogs declared by it.
+4. Open a title and choose one of the returned direct stream URLs to play it.
 
-1. Create a new GitHub repository named `LitestreamTV`.
-2. Upload/commit the contents of this folder to the repository root, including `.github/workflows/build-apk.yml`.
-3. Open **Actions** and select **Build LITESTREAM TV APK**.
-4. Select **Run workflow** (or push a commit to `main`/`master`).
-5. After a successful run, download **LitestreamTV-debug-apk** from the run's Artifacts section. Extract it to get `app-debug.apk`.
+Only install add-ons you trust. Prefer HTTPS. HTTP is enabled for compatibility with user-supplied HTTP manifests/streams, so traffic to those endpoints is not encrypted.
 
-The workflow installs Gradle 8.9 directly and does not require a checked-in Gradle wrapper. For local builds, install Gradle 8.9 and Android SDK platform 35, then run:
+## Compatibility boundaries — please read
 
-```bash
-gradle --no-daemon testDebugUnitTest assembleDebug
-```
+This is a working integration foundation, not a universal Stremio runtime:
 
-Output: `app/build/outputs/apk/debug/app-debug.apk`.
+- It currently handles direct HTTP/HTTPS stream URLs. Torrent hashes, `ytId`, magnet links, external-player links, and add-ons that require a custom resolver are not converted to playable URLs.
+- Series episode navigation, add-on-specific configurable forms, add-on catalog search/pagination, external subtitle URL injection, Trakt sign-in/sync, and advanced DRM configuration are not implemented yet.
+- HLS (`.m3u8`), DASH (`.mpd`), and progressive HTTP/HTTPS are supported through Media3. HDR output depends on the TV/box, Android version, decoder, codec profile, bit depth, stream packaging, and display pipeline. No app can promise every codec or HDR format on every device.
+- DRM-protected streams only play when their DRM scheme/license setup is supported and configured; this version does not add per-add-on DRM configuration.
+- Some add-ons return browser-only, geo-restricted, expiring, or header-sensitive links. These may not work in an Android player even if they work elsewhere.
+- Catalog endpoints with mandatory `extra` properties may need more add-on-specific handling than the default catalog request implemented here.
 
-## Install on Android TV
+## Project structure
 
-Copy the debug APK to the TV or use Android Debug Bridge with USB/network debugging enabled, then run:
+- `app/src/main/java/com/litestream/tv/MainActivity.kt` — TV UI, add-on manager, details and playback screens.
+- `app/src/main/java/com/litestream/tv/data/AddonRepository.kt` — manifest, catalog and stream HTTP client plus local persistence.
+- `app/src/main/java/com/litestream/tv/data/MediaItem.kt` — catalog item models.
+- `source-design.html` — original HTML design reference.
 
-```bash
-adb install -r app-debug.apk
-```
+## Notes
 
-## Media URL configuration
-
-For a controlled playback test, set a real, authorized, compatible HTTPS media URL on a `MediaItem`'s `playbackUrl`. The player screen only opens for items with a non-null URL. Do not commit private provider tokens or secrets.
-
-## Version
-
-Starter project 1.0.0. This is a foundation for development, not a claim that every feature described in the original HTML is fully ported.
+- The project is configured for Android SDK 35 and JDK 17.
+- The debug APK is for testing/sideloading, not a signed production release.
+- Build success should be verified by the GitHub Actions workflow after each update.

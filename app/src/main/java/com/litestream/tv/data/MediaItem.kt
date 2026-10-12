@@ -10,7 +10,11 @@ data class MediaItem(
     val category: String,
     val posterColor: Long,
     val playbackUrl: String? = null,
-    val isDemo: Boolean = true
+    val isDemo: Boolean = true,
+    val stremioType: String = if (type == MediaType.SERIES) "series" else "movie",
+    val addonManifestUrls: List<String> = emptyList(),
+    val posterUrl: String? = null,
+    val addonName: String = "LITESTREAM"
 )
 
 enum class MediaType { MOVIE, SERIES }
