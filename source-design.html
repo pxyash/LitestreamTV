@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LITESTREAM - Space Gray & Powder Blue Streaming App</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        space: {
+                            950: '#111318',
+                            900: '#171a21',
+                            850: '#1f232d',
+                            800: '#282d3a',
+                            700: '#383f50',
+                            600: '#4c556b',
+                            400: '#8c98b0'
+                        },
+                        powder: {
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985'
+                        }
+                    },
+                    boxShadow: {
+                        'powder-glow': '0 0 25px -5px rgba(56, 189, 248, 0.4)',
+                        'powder-soft': '0 4px 15px -2px rgba(56, 189, 248, 0.25)',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;800&family=Outfit:wght@300;400;500;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .font-logo-script {
+            font-family: 'Pacifico', cursive;
+        }
+
+        /* Dynamic Font Classes */
+        body.font-inter { font-family: 'Inter', sans-serif; }
+        body.font-outfit { font-family: 'Outfit', sans-serif; }
+        body.font-cinzel { font-family: 'Cinzel', serif; }
+        body.font-mono-code { font-family: 'JetBrains Mono', monospace; }
+
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111318;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #383f50;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #38bdf8;
+        }
+
+        /* Hide scrollbar for horizontal containers */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Theme custom variables & modes */
+        body.theme-dark {
+            background-color: #111318;
+            color: #f3f4f6;
+        }
+        body.theme-dark .theme-text-primary { color: #f8fafc !important; }
+        body.theme-dark .theme-text-secondary { color: #94a3b8 !important; }
+        body.theme-dark .theme-bg-card { background-color: #1f232d !important; border-color: #282d3a !important; }
+        body.theme-dark .theme-bg-nav { background-color: rgba(17, 19, 24, 0.9) !important; border-color: #282d3a !important; }
+
+        body.theme-amoled {
+            background-color: #000000 !important;
+            color: #ffffff;
+        }
+        body.theme-amoled .theme-bg-card {
+            background-color: #0a0a0c !important;
+            border-color: #1a1c23 !important;
+        }
+        body.theme-amoled .theme-bg-nav {
+            background-color: rgba(0, 0, 0, 0.95) !important;
+            border-color: #1a1c23 !important;
+        }
+        body.theme-amoled .theme-text-primary { color: #ffffff !important; }
+        body.theme-amoled .theme-text-secondary { color: #a1a1aa !important; }
+
+        body.theme-powder-deep {
+            background-color: #0b1520 !important;
+            color: #f0f9ff;
+        }
+        body.theme-powder-deep .theme-bg-card {
+            background-color: #112030 !important;
+            border-color: #1e3a5f !important;
+        }
+        body.theme-powder-deep .theme-bg-nav {
+            background-color: rgba(11, 21, 32, 0.92) !important;
+            border-color: #1e3a5f !important;
+        }
+        body.theme-powder-deep .theme-text-primary { color: #f0f9ff !important; }
+        body.theme-powder-deep .theme-text-secondary { color: #7dd3fc !important; }
+
+        /* Smooth tab hover transition */
+        .nav-link {
+            transition: all 0.25s ease-in-out;
+        }
+        .nav-link:hover {
+            color: #ffffff !important;
+            background-color: rgba(56, 189, 248, 0.2);
+            border-color: rgba(56, 189, 248, 0.4);
+            transform: translateY(-1px);
+        }
+        .nav-link.active {
+            background: linear-gradient(135deg, #38bdf8, #0284c7) !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+        }
+
+        /* Smooth Search Overlay Animations */
+        #fullscreenSearchOverlay {
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        #fullscreenSearchOverlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        #fullscreenSearchOverlay:not(.hidden) {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        #fullscreenSearchBox {
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease-in-out;
+        }
+        #fullscreenSearchOverlay.hidden #fullscreenSearchBox {
+            transform: scale(0.95) translateY(-20px);
+            opacity: 0;
+        }
+        #fullscreenSearchOverlay:not(.hidden) #fullscreenSearchBox {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="theme-dark font-inter bg-space-950 font-sans text-white transition-colors duration-300 min-h-screen flex flex-col">
+
+    <!-- STREAMING HEADER NAVBAR -->
+    <header class="sticky top-0 z-40 theme-bg-nav bg-space-950/90 backdrop-blur-md border-b border-space-800/80 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+            
+            <!-- Brand Logo -->
+            <div class="flex items-center gap-8">
+                <a href="#" onclick="switchTab('home')" class="group flex items-center gap-2 py-1">
+                    <span class="font-logo-script text-3xl font-normal tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-powder-200 via-powder-300 to-sky-400 capitalize drop-shadow-[0_2px_10px_rgba(56,189,248,0.3)] group-hover:scale-105 transition-transform duration-300">Litestream</span>
+                </a>
+
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden md:flex items-center gap-2">
+                    <button id="nav-home" onclick="switchTab('home')" class="nav-link active px-4 py-2 rounded-xl text-xs font-bold border border-transparent">
+                        <i class="fa-solid fa-house mr-1.5"></i> Home
+                    </button>
+                    <button id="nav-movies" onclick="switchTab('movies')" class="nav-link px-4 py-2 rounded-xl text-xs font-bold border border-transparent">
+                        <i class="fa-solid fa-film mr-1.5"></i> Movies
+                    </button>
+                    <button id="nav-series" onclick="switchTab('series')" class="nav-link px-4 py-2 rounded-xl text-xs font-bold border border-transparent">
+                        <i class="fa-solid fa-tv mr-1.5"></i> TV Shows
+                    </button>
+                    <button id="nav-library" onclick="switchTab('library')" class="nav-link px-4 py-2 rounded-xl text-xs font-bold border border-transparent relative">
+                        <i class="fa-solid fa-bookmark mr-1.5"></i> My Library
+                        <span id="libraryCounter" class="ml-1.5 px-1.5 py-0.2 rounded-full bg-powder-500 text-white text-[10px] font-extrabold">0</span>
+                    </button>
+                    <button id="nav-settings" onclick="switchTab('settings')" class="nav-link px-4 py-2 rounded-xl text-xs font-bold border border-transparent">
+                        <i class="fa-solid fa-gear mr-1.5"></i> Settings
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Search Bar Trigger & Profile -->
+            <div class="flex items-center gap-3 sm:gap-4">
+                <button onclick="openSearchOverlay()" class="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-space-850 hover:bg-space-800 border border-space-700/60 theme-text-secondary text-space-400 hover:text-powder-400 transition group cursor-pointer">
+                    <i class="fa-solid fa-magnifying-glass text-powder-400 group-hover:scale-110 transition"></i>
+                    <span class="text-xs font-medium hidden sm:inline">Search movies, series...</span>
+                    <kbd class="hidden md:inline-block px-1.5 py-0.5 text-[10px] bg-space-800 text-space-400 rounded border border-space-700 font-mono">⌘K</kbd>
+                </button>
+
+                <!-- Profile Badge -->
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-powder-600 to-sky-400 p-0.5 shadow-powder-soft cursor-pointer">
+                    <div class="w-full h-full bg-space-950 rounded-[14px] flex items-center justify-center text-powder-400 font-black text-xs">
+                        JS
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- FULLSCREEN BLURRED SEARCH OVERLAY -->
+    <div id="fullscreenSearchOverlay" class="fixed inset-0 z-50 bg-space-950/80 backdrop-blur-xl hidden flex flex-col p-4 sm:p-8">
+        <div id="fullscreenSearchBox" class="max-w-4xl mx-auto w-full space-y-6">
+            <div class="flex items-center justify-between gap-4">
+                <div class="relative flex-1">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-powder-400 text-lg"></i>
+                    <input type="text" id="fullscreenSearchInput" oninput="handleSearchInput(this.value)" placeholder="Search movies, tv shows, genres..." class="w-full bg-space-850/90 border-2 border-powder-500/40 focus:border-powder-400 rounded-3xl pl-12 pr-12 py-4 text-sm sm:text-base text-white placeholder-space-400 focus:outline-none shadow-powder-glow transition">
+                    <button onclick="document.getElementById('fullscreenSearchInput').value=''; handleSearchInput('')" class="absolute right-4 top-1/2 -translate-y-1/2 text-space-400 hover:text-white">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+                <button onclick="closeSearchOverlay()" class="px-5 py-4 rounded-3xl bg-space-800 hover:bg-space-700 text-space-300 font-bold text-xs sm:text-sm transition shrink-0">
+                    Close <span class="text-[10px] opacity-60 ml-1">(ESC)</span>
+                </button>
+            </div>
+
+            <!-- Search Results Container -->
+            <div id="searchResultsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 max-h-[75vh] overflow-y-auto pr-2">
+                <div class="col-span-full py-12 text-center text-space-400 text-sm">
+                    Type title, genre, or keyword to search...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN BODY CONTENT CONTAINER -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+
+        <!-- HERO STREAMING CAROUSEL (Clear artwork, no dark gradient overlays) -->
+        <section id="heroCarousel" class="relative rounded-3xl overflow-hidden bg-space-900 border border-space-800 shadow-2xl min-h-[420px] sm:min-h-[480px] flex items-end">
+            <img id="heroBg" src="https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1600&q=80" alt="Hero Featured" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-700">
+
+            <!-- Content Container -->
+            <div class="relative z-10 p-6 sm:p-10 max-w-2xl space-y-4 bg-space-950/80 backdrop-blur-md rounded-2xl m-4 border border-space-800/60 shadow-xl">
+                <div class="flex items-center gap-2">
+                    <span id="heroBadge" class="px-3 py-1 rounded-full bg-powder-500 text-white font-extrabold text-[10px] tracking-wider uppercase shadow-powder-soft">MOVIE</span>
+                    <span id="heroRating" class="px-2.5 py-0.5 rounded-full bg-space-800/80 theme-bg-card border border-space-700 text-amber-400 font-bold text-xs">★ 8.8</span>
+                    <span id="heroMeta" class="text-xs hero-text-secondary text-space-400 font-medium">2024 • 2h 18m • 4K Ultra HD</span>
+                </div>
+
+                <h1 id="heroTitle" class="text-2xl sm:text-4xl lg:text-5xl font-black hero-text-primary text-white tracking-tight leading-tight">Cyberpunk Odyssey 2099</h1>
+                <p id="heroDesc" class="text-xs sm:text-sm hero-text-secondary text-space-400 line-clamp-2 sm:line-clamp-3 leading-relaxed">In a rain-drenched neon metropolis governed by synthetic megacorporations, a rogue data thief discovers an encrypted artificial intelligence carrying the key to human liberation.</p>
+
+                <div class="flex items-center gap-3 pt-2">
+                    <button id="heroPlayBtn" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-powder-400 to-powder-600 hover:from-powder-300 hover:to-powder-500 text-white font-bold text-xs sm:text-sm shadow-powder-glow transition flex items-center gap-2">
+                        <i class="fa-solid fa-play"></i> Play Stream
+                    </button>
+                    <button id="heroInfoBtn" class="px-5 py-3 rounded-2xl bg-space-800/80 theme-bg-card border border-space-700 hero-text-primary text-white font-bold text-xs sm:text-sm transition flex items-center gap-2">
+                        <i class="fa-solid fa-circle-info"></i> More Info
+                    </button>
+                </div>
+            </div>
+
+            <!-- Carousel Controls & Indicators -->
+            <div class="absolute right-6 bottom-6 z-10 flex items-center gap-3">
+                <button onclick="prevHero()" class="w-10 h-10 rounded-2xl bg-space-850/80 theme-bg-card border border-space-700 hero-text-primary text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-chevron-left text-xs"></i>
+                </button>
+                <div id="heroIndicators" class="flex items-center gap-1.5"></div>
+                <button onclick="nextHero()" class="w-10 h-10 rounded-2xl bg-space-850/80 theme-bg-card border border-space-700 hero-text-primary text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                </button>
+            </div>
+        </section>
+
+        /* CATALOGS DISPLAY VIEW */
+        <div id="catalogView" class="space-y-12">
+            <div id="catalogRows" class="space-y-12">
+                <!-- Rows dynamically injected via JS -->
+            </div>
+        </div>
+
+        <!-- MY LIBRARY VIEW -->
+        <div id="libraryView" class="hidden space-y-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-bold theme-text-primary text-white flex items-center gap-2">
+                        <i class="fa-solid fa-bookmark text-powder-400"></i> My Library
+                    </h2>
+                    <p class="text-xs theme-text-secondary text-space-400">Your bookmarked movies and saved TV shows.</p>
+                </div>
+            </div>
+
+            <div id="libraryGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 sm:gap-8">
+                <!-- Bookmarked tiles injected here -->
+            </div>
+            
+            <div id="emptyLibrary" class="hidden py-16 text-center space-y-3">
+                <i class="fa-solid fa-film text-4xl text-space-600"></i>
+                <p class="text-sm font-semibold text-space-400">Your library is currently empty.</p>
+                <button onclick="switchTab('home')" class="px-4 py-2 rounded-xl bg-powder-500 text-white text-xs font-bold shadow-powder-soft">Explore Catalogs</button>
+            </div>
+        </div>
+
+        <!-- FULL PAGE SETTINGS VIEW -->
+        <div id="settingsView" class="hidden space-y-6">
+            <div class="border-b border-space-800 pb-4">
+                <h2 class="text-2xl font-black theme-text-primary text-white flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-powder-400"></i> Platform Settings
+                </h2>
+                <p class="text-xs theme-text-secondary text-space-400 mt-1">Configure playback options, active color themes, font families, integrations, and extensions.</p>
+            </div>
+
+            <!-- Settings Sidebar & Content Area -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- Navigation Tabs -->
+                <div class="space-y-1">
+                    <button id="setTab-appearance" onclick="switchSettingsTab('appearance')" class="w-full text-left px-4 py-3 rounded-2xl bg-gradient-to-r from-powder-400 to-powder-600 text-white font-bold text-xs shadow-powder-glow transition flex items-center justify-between">
+                        <span><i class="fa-solid fa-palette mr-2"></i> Theme & Font Settings</span>
+                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </button>
+                    <button id="setTab-player" onclick="switchSettingsTab('player')" class="w-full text-left px-4 py-3 rounded-2xl theme-text-secondary text-space-300 font-semibold text-xs transition flex items-center justify-between hover:bg-space-800/60">
+                        <span><i class="fa-solid fa-circle-play mr-2"></i> Player Settings</span>
+                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </button>
+                    <button id="setTab-addons" onclick="switchSettingsTab('addons')" class="w-full text-left px-4 py-3 rounded-2xl theme-text-secondary text-space-300 font-semibold text-xs transition flex items-center justify-between hover:bg-space-800/60">
+                        <span><i class="fa-solid fa-puzzle-piece mr-2"></i> Add-ons & Extensions</span>
+                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </button>
+                    <button id="setTab-integrations" onclick="switchSettingsTab('integrations')" class="w-full text-left px-4 py-3 rounded-2xl theme-text-secondary text-space-300 font-semibold text-xs transition flex items-center justify-between hover:bg-space-800/60">
+                        <span><i class="fa-solid fa-network-wired mr-2"></i> Integrations</span>
+                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </button>
+                </div>
+
+                <!-- Settings Panels Container -->
+                <div class="lg:col-span-3 space-y-6">
+                    
+                    <!-- 1. Appearance Section (Themes & Fonts) -->
+                    <div id="setSection-appearance" class="theme-bg-card bg-space-850 border border-space-700/60 rounded-3xl p-6 sm:p-8 space-y-8">
+                        <!-- Themes Picker -->
+                        <div class="space-y-4">
+                            <div>
+                                <h3 class="text-xl font-bold theme-text-primary text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-palette text-powder-400"></i> Theme Selection
+                                </h3>
+                                <p class="text-xs theme-text-secondary text-space-400 mt-1">Choose your preferred color theme with Powder Blue accents.</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <!-- Space Gray -->
+                                <div onclick="setTheme('dark')" class="cursor-pointer p-4 rounded-2xl bg-space-900 border-2 border-powder-400/80 flex items-center justify-between hover:scale-102 transition">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-xl bg-space-800 border border-powder-400 flex items-center justify-center text-powder-400 text-xs font-bold">
+                                            <i class="fa-solid fa-moon"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs font-bold text-white">Space Gray (Default)</p>
+                                            <p class="text-[10px] text-space-400">Deep slate gray & powder blue</p>
+                                        </div>
+                                    </div>
+                                    <span class="w-3 h-3 rounded-full bg-powder-400"></span>
+                                </div>
+
+                                <!-- AMOLED Black -->
+                                <div onclick="setTheme('amoled')" class="cursor-pointer p-4 rounded-2xl bg-black border border-space-700 flex items-center justify-between hover:border-powder-400 transition">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-xl bg-neutral-900 border border-neutral-700 flex items-center justify-center text-powder-400 text-xs font-bold">
+                                            <i class="fa-solid fa-circle"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs font-bold text-white">Pure AMOLED Black</p>
+                                            <p class="text-[10px] text-neutral-400">True #000000 OLED screen</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Deep Powder Ocean -->
+                                <div onclick="setTheme('powder-deep')" class="cursor-pointer p-4 rounded-2xl bg-[#0b1520] border border-[#1e3a5f] flex items-center justify-between hover:border-powder-400 transition">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-xl bg-[#112030] border border-powder-500 flex items-center justify-center text-powder-400 text-xs font-bold">
+                                            <i class="fa-solid fa-water"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs font-bold text-[#f0f9ff]">Deep Ocean Powder</p>
+                                            <p class="text-[10px] text-space-400">Rich oceanic navy & cyan blue</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Font Family Selector -->
+                        <div class="space-y-4 pt-4 border-t border-space-700/50">
+                            <div>
+                                <h3 class="text-xl font-bold theme-text-primary text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-font text-powder-400"></i> Typography & Fonts
+                                </h3>
+                                <p class="text-xs theme-text-secondary text-space-400 mt-1">Select the main font style for the application interface.</p>
+                            </div>
+
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <button onclick="setFontStyle('inter')" id="fontBtn-inter" class="p-3.5 rounded-2xl bg-space-800/80 border border-powder-400 text-white font-bold text-xs hover:border-powder-400 transition flex flex-col items-center gap-2">
+                                    <span class="text-lg font-sans">Aa</span>
+                                    <span>Inter (Modern)</span>
+                                </button>
+                                <button onclick="setFontStyle('outfit')" id="fontBtn-outfit" class="p-3.5 rounded-2xl bg-space-800/80 border border-space-700 text-white font-bold text-xs hover:border-powder-400 transition flex flex-col items-center gap-2">
+                                    <span class="text-lg font-['Outfit']">Aa</span>
+                                    <span>Outfit (Geometric)</span>
+                                </button>
+                                <button onclick="setFontStyle('cinzel')" id="fontBtn-cinzel" class="p-3.5 rounded-2xl bg-space-800/80 border border-space-700 text-white font-bold text-xs hover:border-powder-400 transition flex flex-col items-center gap-2">
+                                    <span class="text-lg font-['Cinzel']">Aa</span>
+                                    <span>Cinzel (Cinematic)</span>
+                                </button>
+                                <button onclick="setFontStyle('mono-code')" id="fontBtn-mono-code" class="p-3.5 rounded-2xl bg-space-800/80 border border-space-700 text-white font-bold text-xs hover:border-powder-400 transition flex flex-col items-center gap-2">
+                                    <span class="text-lg font-mono">Aa</span>
+                                    <span>JetBrains (Mono)</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Player Settings Section -->
+                    <div id="setSection-player" class="hidden theme-bg-card bg-space-850 border border-space-700/60 rounded-3xl p-6 sm:p-8 space-y-6">
+                        <div>
+                            <h3 class="text-xl font-bold theme-text-primary text-white flex items-center gap-2">
+                                <i class="fa-solid fa-circle-play text-powder-400"></i> Video & Playback Controls
+                            </h3>
+                            <p class="text-xs theme-text-secondary text-space-400 mt-1">Fine-tune streaming resolutions, audio output, and preview behaviors.</p>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-4 rounded-2xl bg-space-800/60 border border-space-700/50">
+                                <div>
+                                    <p class="text-xs font-bold theme-text-primary text-white">Default Video Quality</p>
+                                    <p class="text-[11px] theme-text-secondary text-space-400">Automatically scale to highest available bandwidth</p>
+                                </div>
+                                <select class="bg-space-900 border border-space-700 text-xs rounded-xl px-3 py-1.5 text-white focus:outline-none focus:border-powder-400">
+                                    <option>Auto (4K Ultra HD)</option>
+                                    <option>1080p Full HD</option>
+                                    <option>720p HD</option>
+                                </select>
+                            </div>
+
+                            <div class="flex items-center justify-between p-4 rounded-2xl bg-space-800/60 border border-space-700/50">
+                                <div>
+                                    <p class="text-xs font-bold theme-text-primary text-white">Autoplay Previews</p>
+                                    <p class="text-[11px] theme-text-secondary text-space-400">Play video teasers automatically when hovering cards</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" checked class="sr-only peer">
+                                    <div class="w-11 h-6 bg-space-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-powder-400"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Add-ons & Extensions Section -->
+                    <div id="setSection-addons" class="hidden theme-bg-card bg-space-850 border border-space-700/60 rounded-3xl p-6 sm:p-8 space-y-6">
+                        <div>
+                            <h3 class="text-xl font-bold theme-text-primary text-white flex items-center gap-2">
+                                <i class="fa-solid fa-puzzle-piece text-powder-400"></i> Installed Add-ons & Extensions
+                            </h3>
+                            <p class="text-xs theme-text-secondary text-space-400 mt-1">Extend functionality with community subtitle engines, metadata providers, stream scraping sources, and custom manifests (Stremio & Nuvio compatible).</p>
+                        </div>
+
+                        <!-- Install Add-on via Manifest URL Bar -->
+                        <div class="p-5 rounded-2xl bg-space-800/80 border border-powder-400/30 space-y-3 shadow-inner">
+                            <label for="addonUrlInput" class="block text-xs font-bold text-powder-300">
+                                <i class="fa-solid fa-plus-circle mr-1"></i> Install Add-on from Manifest URL
+                            </label>
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <input type="url" id="addonUrlInput" placeholder="https://example.com/manifest.json" class="flex-1 bg-space-900 border border-space-700 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-space-400 focus:outline-none focus:border-powder-400 transition">
+                                <button onclick="installAddonFromUrl()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-powder-400 to-powder-600 hover:from-powder-300 hover:to-powder-500 text-white font-bold text-xs shadow-powder-glow transition shrink-0 flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-download text-xs"></i> Install Add-on
+                                </button>
+                            </div>
+                            <p id="addonStatusMsg" class="text-[11px] hidden text-emerald-400 font-medium"></p>
+                        </div>
+
+                        <!-- Installed Add-ons List -->
+                        <div class="space-y-3">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-space-400">Active Add-ons</h4>
+                            <div id="addonsList" class="space-y-3">
+                                <!-- Dynamic Addons rendered here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Integrations Section -->
+                    <div id="setSection-integrations" class="hidden theme-bg-card bg-space-850 border border-space-700/60 rounded-3xl p-6 sm:p-8 space-y-6">
+                        <div>
+                            <h3 class="text-xl font-bold theme-text-primary text-white flex items-center gap-2">
+                                <i class="fa-solid fa-network-wired text-powder-400"></i> Account & External Services
+                            </h3>
+                            <p class="text-xs theme-text-secondary text-space-400 mt-1">Link your third-party tracking services and scrobblers to synchronize watched progress.</p>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="p-4 rounded-2xl bg-space-800/60 border border-space-700/50 flex items-center justify-between gap-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-lg border border-rose-500/20">
+                                        <i class="fa-solid fa-square-check"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-bold theme-text-primary text-white">Trakt.tv Sync</p>
+                                        <p class="text-xs theme-text-secondary text-space-400">Automatically scrobble movie & episode watching history</p>
+                                    </div>
+                                </div>
+                                <button class="px-4 py-2 rounded-xl bg-space-700 hover:bg-powder-500 hover:text-white text-space-300 font-semibold text-xs transition">Connect</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- MEDIA DETAIL MODAL -->
+    <div id="mediaDetailModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="relative bg-space-900 border border-space-700 rounded-3xl overflow-hidden max-w-2xl w-full shadow-2xl space-y-4">
+            <button onclick="closeMediaModal()" class="absolute top-4 right-4 z-20 w-8 h-8 rounded-full bg-space-950/80 text-white flex items-center justify-center hover:bg-powder-400 transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="relative h-64 sm:h-80">
+                <img id="modalBg" src="" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-space-900 via-space-900/40 to-transparent"></div>
+            </div>
+
+            <div class="p-6 space-y-4 -mt-16 relative z-10">
+                <div class="flex items-center gap-2">
+                    <span id="modalType" class="px-2.5 py-0.5 rounded-full bg-powder-500 text-white font-bold text-[10px]">MOVIE</span>
+                    <span id="modalRating" class="text-amber-400 font-bold text-xs">★ 8.8</span>
+                    <span id="modalYear" class="text-space-400 text-xs">2024</span>
+                </div>
+
+                <h3 id="modalTitle" class="text-2xl sm:text-3xl font-black text-white">Title</h3>
+                <p id="modalDesc" class="text-xs sm:text-sm text-space-400 leading-relaxed">Description</p>
+
+                <div class="flex items-center gap-3 pt-4">
+                    <button id="modalPlayBtn" class="flex-1 py-3 rounded-2xl bg-gradient-to-r from-powder-400 to-powder-600 text-white font-bold text-xs sm:text-sm shadow-powder-glow hover:brightness-110 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-play"></i> Find Available Streams
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- STREAM SOURCES SELECTION MODAL/SCREEN -->
+    <div id="sourcesModal" class="fixed inset-0 z-50 bg-space-950/90 backdrop-blur-xl hidden flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+        <div class="relative bg-space-900 border border-space-700/80 rounded-3xl max-w-3xl w-full shadow-2xl p-6 sm:p-8 space-y-6 my-auto">
+            
+            <!-- Header -->
+            <div class="flex items-start justify-between border-b border-space-800 pb-4">
+                <div class="flex items-center gap-4">
+                    <img id="sourcesPoster" src="" class="w-12 h-16 rounded-xl object-cover border border-space-700 shrink-0">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span id="sourcesType" class="px-2 py-0.5 rounded-md bg-powder-500/20 text-powder-400 font-bold text-[10px] tracking-wider uppercase border border-powder-500/30">MOVIE</span>
+                            <span id="sourcesYear" class="text-space-400 text-xs font-medium">2024</span>
+                        </div>
+                        <h3 id="sourcesTitle" class="text-xl sm:text-2xl font-black text-white tracking-tight">Title</h3>
+                        <p class="text-xs text-space-400 mt-0.5">Select a stream source from active add-ons to start watching</p>
+                    </div>
+                </div>
+                <button onclick="closeSourcesModal()" class="w-9 h-9 rounded-2xl bg-space-850 hover:bg-space-800 text-space-300 hover:text-white border border-space-700 flex items-center justify-center transition shrink-0">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <!-- Active Sources List Container -->
+            <div class="space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-bold uppercase tracking-wider text-space-400">
+                    <span class="flex items-center gap-2">
+                        <i class="fa-solid fa-satellite-dish text-powder-400 animate-pulse"></i> 
+                        Available Add-on Streams
+                    </span>
+                    
+                    <!-- Quality Filter Dropdown & Badge Container -->
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-1.5 bg-space-850 border border-space-700/80 rounded-xl px-2.5 py-1 text-xs">
+                            <i class="fa-solid fa-filter text-powder-400 text-[10px]"></i>
+                            <select id="streamQualityFilter" onchange="filterAndRenderStreams()" class="bg-transparent text-white focus:outline-none cursor-pointer text-xs font-semibold uppercase tracking-normal">
+                                <option value="all" class="bg-space-900 text-white">All Qualities</option>
+                                <option value="4k" class="bg-space-900 text-white">4K Ultra HD</option>
+                                <option value="1080p" class="bg-space-900 text-white">1080p Full HD</option>
+                                <option value="720p" class="bg-space-900 text-white">720p HD</option>
+                                <option value="others" class="bg-space-900 text-white">Others / SD</option>
+                            </select>
+                        </div>
+                        <span id="sourcesCountBadge" class="px-2 py-0.5 rounded-full bg-powder-500/20 text-powder-300 font-mono text-[10px] shrink-0">Loading sources...</span>
+                    </div>
+                </div>
+
+                <div id="sourcesList" class="space-y-3 max-h-[50vh] overflow-y-auto pr-1">
+                    <!-- Stream sources injected dynamically via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FULLSCREEN VIDEO PLAYER OVERLAY -->
+    <div id="videoPlayerOverlay" class="fixed inset-0 z-50 bg-black hidden flex flex-col justify-between p-6">
+        <div class="flex items-center justify-between text-white z-10">
+            <div class="flex items-center gap-3">
+                <button onclick="closeVideoPlayer()" class="w-10 h-10 rounded-2xl bg-space-850 border border-space-700 hover:bg-powder-400 flex items-center justify-center transition">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <div>
+                    <h4 id="playerTitle" class="text-sm font-bold text-white">Stream Player</h4>
+                    <p id="playerSubtitle" class="text-[10px] text-space-400">1080p 60fps • Stereo Audio</p>
+                </div>
+            </div>
+            <span class="px-2.5 py-1 rounded-lg bg-powder-500/20 text-powder-400 font-mono text-xs border border-powder-500/30">STREAMING ACTIVE</span>
+        </div>
+
+        <div class="text-center py-24 space-y-4">
+            <div class="w-20 h-20 rounded-full bg-powder-500/20 text-powder-400 border border-powder-500/40 flex items-center justify-center mx-auto text-3xl animate-pulse">
+                <i class="fa-solid fa-play"></i>
+            </div>
+            <p id="playerStreamSourceInfo" class="text-xs text-space-400">Simulated HD Video Playback Engine</p>
+        </div>
+
+        <div class="space-y-3 z-10">
+            <div class="w-full bg-space-800 rounded-full h-1.5 cursor-pointer">
+                <div class="bg-powder-400 h-1.5 rounded-full w-1/3 shadow-powder-glow"></div>
+            </div>
+            <div class="flex items-center justify-between text-xs text-space-400">
+                <div class="flex items-center gap-4">
+                    <i class="fa-solid fa-pause text-white cursor-pointer hover:text-powder-400"></i>
+                    <i class="fa-solid fa-volume-high text-white cursor-pointer hover:text-powder-400"></i>
+                    <span>24:18 / 1:45:00</span>
+                </div>
+                <i class="fa-solid fa-expand text-white cursor-pointer hover:text-powder-400"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- STREAMFLIX JAVASCRIPT LOGIC ENGINE -->
+    <script>
+        const mediaCatalog = [
+            { id: 1, title: 'Cyberpunk Odyssey 2099', type: 'movie', year: 2024, rating: 8.8, duration: '2h 18m', category: 'trending', bg: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1600&q=80', poster: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=500&q=80', desc: 'In a rain-drenched neon metropolis governed by synthetic megacorporations, a rogue data thief discovers an encrypted artificial intelligence carrying the key to human liberation.' },
+            { id: 2, title: 'Solaris Drift', type: 'series', year: 2023, rating: 9.1, seasons: '3 Seasons', category: 'trending', bg: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1600&q=80', poster: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=500&q=80', desc: 'When humanity\'s first interstellar vessel disappears past the outer boundary, a rescue crew investigates a ghost ship drifting through cosmic silence.' },
+            { id: 3, title: 'Shadow Realm', type: 'series', year: 2024, rating: 8.6, seasons: '2 Seasons', category: 'trending', bg: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=80', poster: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=500&q=80', desc: 'Ancient mythologies awaken in modern London as an underground society of spellcasters fights to prevent the convergence of parallel dimensions.' },
+            { id: 4, title: 'Deep Ocean Horizon', type: 'movie', year: 2023, rating: 8.3, duration: '1h 55m', category: 'action', bg: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1600&q=80', poster: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=500&q=80', desc: 'A deep-sea drilling research station eleven kilometers below ocean level encounters unknown biological entities triggered by seismic shifting.' },
+            { id: 5, title: 'The Quantum Protocol', type: 'movie', year: 2024, rating: 8.9, duration: '2h 10m', category: 'scifi', bg: 'https://images.unsplash.com/photo-1507499739999-097706ad8914?auto=format&fit=crop&w=1600&q=80', poster: 'https://images.unsplash.com/photo-1507499739999-097706ad8914?auto=format&fit=crop&w=500&q=80', desc: 'Theoretical physicists accidentally construct a subatomic doorway through space, allowing instant teleportation—and unpredictable temporal shifts.' },
+            { id: 6, title: 'Neon Velocity', type: 'movie', year: 2023, rating: 8.4, duration: '1h 48m', category: 'action', bg: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=1600&q=80', poster: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=500&q=80', desc: 'High-stakes underground street racing meets high-tech espionage in Tokyo\'s midnight circuit.' }
+        ];
+
+        let activeTab = 'home';
+        let currentTheme = localStorage.getItem('litestream_theme') || 'dark';
+        if (currentTheme === 'light') currentTheme = 'dark';
+        let currentFont = localStorage.getItem('litestream_font') || 'inter';
+        let myLibrary = JSON.parse(localStorage.getItem('litestream_library') || '[]');
+        let installedAddons = JSON.parse(localStorage.getItem('litestream_addons') || 'null') || [
+            { id: 'addon-1', name: 'Torrentio Streams', version: 'v1.0.8', desc: 'Scrapes 4K, 1080p, and 720p streams from multi-trackers', enabled: true, icon: 'fa-bolt', url: 'https://torrentio.strem.fun/manifest.json' },
+            { id: 'addon-2', name: 'OpenSubtitles Auto-Sync', version: 'v3.4.1', desc: 'Fetches multi-language subtitles dynamically', enabled: true, icon: 'fa-closed-captioning', url: 'https://subtitles.strem.io/manifest.json' },
+            { id: 'addon-3', name: 'TMDB Metadata Enriched', version: 'v2.1.0', desc: 'Cast ratings, synopsis, and high-res posters', enabled: true, icon: 'fa-database', url: 'https://v3-cinemeta.strem.io/manifest.json' }
+        ];
+        let heroIndex = 0;
+        let heroInterval = null;
+        let activeMediaForStreams = null;
+        let currentAvailableStreams = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTheme(currentTheme);
+            setFontStyle(currentFont);
+            renderHero();
+            renderCatalogRows();
+            updateLibraryCounter();
+            renderAddons();
+            startHeroAutoplay();
+        });
+
+        /* FONT FAMILY SWITCHER */
+        function setFontStyle(font) {
+            currentFont = font;
+            localStorage.setItem('litestream_font', font);
+            document.body.classList.remove('font-inter', 'font-outfit', 'font-cinzel', 'font-mono-code');
+            document.body.classList.add(`font-${font}`);
+
+            document.querySelectorAll('[id^="fontBtn-"]').forEach(btn => {
+                btn.className = "p-3.5 rounded-2xl bg-space-800/80 border border-space-700 text-white font-bold text-xs hover:border-powder-400 transition flex flex-col items-center gap-2";
+            });
+            const activeBtn = document.getElementById(`fontBtn-${font}`);
+            if (activeBtn) {
+                activeBtn.className = "p-3.5 rounded-2xl bg-space-800/80 border-2 border-powder-400 text-powder-300 font-bold text-xs shadow-powder-soft transition flex flex-col items-center gap-2";
+            }
+        }
+
+        /* DYNAMIC ADD-ONS MANAGEMENT ENGINE */
+        function renderAddons() {
+            const list = document.getElementById('addonsList');
+            if (!list) return;
+
+            if (installedAddons.length === 0) {
+                list.innerHTML = '<div class="p-6 text-center text-xs text-space-400">No add-ons installed. Add one using a manifest URL above.</div>';
+                return;
+            }
+
+            list.innerHTML = installedAddons.map((addon) => `
+                <div class="p-4 rounded-2xl bg-space-800/60 border border-space-700/50 flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-9 h-9 rounded-xl bg-powder-500/20 text-powder-400 flex items-center justify-center text-sm border border-powder-500/30 shrink-0">
+                            <i class="fa-solid ${addon.icon || 'fa-puzzle-piece'}"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2">
+                                <p class="text-xs sm:text-sm font-bold theme-text-primary text-white truncate">${addon.name}</p>
+                                <span class="text-[10px] text-space-400 font-mono">${addon.version || 'v1.0.0'}</span>
+                                <span class="text-[9px] px-1.5 py-0.5 rounded ${addon.enabled ? 'bg-emerald-500/20 text-emerald-400' : 'bg-space-700 text-space-400'} font-semibold">${addon.enabled ? 'ACTIVE' : 'OFF'}</span>
+                            </div>
+                            <p class="text-[11px] theme-text-secondary text-space-400 truncate">${addon.desc || 'Custom Stremio/Nuvio Compatible Addon'}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 shrink-0">
+                        <label class="relative inline-flex items-center cursor-pointer" title="Toggle Enable/Disable">
+                            <input type="checkbox" ${addon.enabled ? 'checked' : ''} onchange="toggleAddonState('${addon.id}')" class="sr-only peer">
+                            <div class="w-11 h-6 bg-space-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-powder-400"></div>
+                        </label>
+                        <button onclick="removeAddon('${addon.id}')" title="Uninstall Add-on" class="w-8 h-8 rounded-xl bg-space-900 border border-space-700 hover:border-rose-500/50 text-space-400 hover:text-rose-400 transition flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleAddonState(id) {
+            const addon = installedAddons.find(a => a.id === id);
+            if (addon) {
+                addon.enabled = !addon.enabled;
+                saveAddons();
+                renderAddons();
+            }
+        }
+
+        function removeAddon(id) {
+            installedAddons = installedAddons.filter(a => a.id !== id);
+            saveAddons();
+            renderAddons();
+        }
+
+        async function installAddonFromUrl() {
+            const input = document.getElementById('addonUrlInput');
+            const url = input.value.trim();
+
+            if (!url) {
+                showAddonStatus('Please enter a valid manifest URL (e.g., https://.../manifest.json)', true);
+                return;
+            }
+
+            showAddonStatus('Fetching and validating manifest...', false);
+
+            try {
+                let manifestData = null;
+                try {
+                    const res = await fetch(url);
+                    if (res.ok) {
+                        manifestData = await res.json();
+                    }
+                } catch (e) {
+                    console.log('Cross-origin simulation fallback used for:', url);
+                }
+
+                const urlParts = url.replace(/https?:\/\//, '').split('/');
+                const domainName = urlParts[0] || 'Custom Provider';
+                
+                const newAddon = {
+                    id: 'addon-' + Date.now(),
+                    name: manifestData?.name || manifestData?.id || domainName.split('.')[0].toUpperCase() + ' Addon',
+                    version: manifestData?.version ? 'v' + manifestData.version : 'v1.0.0',
+                    desc: manifestData?.description || `Installed from ${domainName}`,
+                    enabled: true,
+                    icon: 'fa-plug',
+                    url: url
+                };
+
+                installedAddons.push(newAddon);
+                saveAddons();
+                renderAddons();
+
+                input.value = '';
+                showAddonStatus(`Successfully installed "${newAddon.name}"!`, false);
+            } catch (err) {
+                showAddonStatus('Failed to load add-on manifest. Check URL and try again.', true);
+            }
+        }
+
+        function showAddonStatus(msg, isError) {
+            const statusMsg = document.getElementById('addonStatusMsg');
+            if (!statusMsg) return;
+            statusMsg.innerText = msg;
+            statusMsg.className = `text-[11px] block ${isError ? 'text-rose-400' : 'text-emerald-400'} font-medium mt-1`;
+            setTimeout(() => {
+                statusMsg.className = 'text-[11px] hidden text-emerald-400 font-medium mt-1';
+            }, 4000);
+        }
+
+        function saveAddons() {
+            localStorage.setItem('litestream_addons', JSON.stringify(installedAddons));
+        }
+
+        /* NAVIGATION & TABS SWITCHING */
+        function switchTab(tab) {
+            activeTab = tab;
+            document.querySelectorAll('.nav-link').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.getElementById(`nav-${tab}`);
+            if (activeBtn) activeBtn.classList.add('active');
+
+            const hero = document.getElementById('heroCarousel');
+            const catalogView = document.getElementById('catalogView');
+            const libraryView = document.getElementById('libraryView');
+            const settingsView = document.getElementById('settingsView');
+
+            catalogView.classList.add('hidden');
+            libraryView.classList.add('hidden');
+            settingsView.classList.add('hidden');
+
+            if (tab === 'home') {
+                hero.classList.remove('hidden');
+                catalogView.classList.remove('hidden');
+                renderCatalogRows();
+            } else if (tab === 'movies') {
+                hero.classList.add('hidden');
+                catalogView.classList.remove('hidden');
+                renderFilteredCatalog('movie');
+            } else if (tab === 'series') {
+                hero.classList.add('hidden');
+                catalogView.classList.remove('hidden');
+                renderFilteredCatalog('series');
+            } else if (tab === 'library') {
+                hero.classList.add('hidden');
+                libraryView.classList.remove('hidden');
+                renderLibrary();
+            } else if (tab === 'settings') {
+                hero.classList.add('hidden');
+                settingsView.classList.remove('hidden');
+            }
+        }
+
+        function switchSettingsTab(section) {
+            document.querySelectorAll('[id^="setTab-"]').forEach(btn => {
+                btn.className = "w-full text-left px-4 py-3 rounded-2xl theme-text-secondary text-space-300 font-semibold text-xs transition flex items-center justify-between hover:bg-space-800/60";
+            });
+            const selectedBtn = document.getElementById(`setTab-${section}`);
+            if (selectedBtn) {
+                selectedBtn.className = "w-full text-left px-4 py-3 rounded-2xl bg-gradient-to-r from-powder-400 to-powder-600 text-white font-bold text-xs shadow-powder-glow transition flex items-center justify-between";
+            }
+
+            document.querySelectorAll('[id^="setSection-"]').forEach(el => el.classList.add('hidden'));
+            const targetSec = document.getElementById(`setSection-${section}`);
+            if (targetSec) targetSec.classList.remove('hidden');
+        }
+
+        /* HERO CAROUSEL LOGIC */
+        function renderHero() {
+            const item = mediaCatalog[heroIndex];
+            if (!item) return;
+
+            document.getElementById('heroBg').src = item.bg;
+            document.getElementById('heroTitle').innerText = item.title;
+            document.getElementById('heroDesc').innerText = item.desc;
+            document.getElementById('heroMeta').innerText = `${item.year} • ${item.duration || item.seasons}`;
+            document.getElementById('heroRating').innerText = `★ ${item.rating}`;
+            document.getElementById('heroBadge').innerText = item.type === 'movie' ? 'MOVIE' : 'SERIES';
+
+            document.getElementById('heroPlayBtn').onclick = () => openMediaModal(item.id);
+            document.getElementById('heroInfoBtn').onclick = () => openMediaModal(item.id);
+
+            renderHeroIndicators();
+        }
+
+        function renderHeroIndicators() {
+            const container = document.getElementById('heroIndicators');
+            if (!container) return;
+            container.innerHTML = mediaCatalog.slice(0, 3).map((_, idx) => `
+                <button onclick="setHeroIndex(${idx})" class="w-3 h-3 rounded-full transition-all ${idx === heroIndex ? 'bg-powder-400 w-8' : 'bg-white/40 hover:bg-white/70'}"></button>
+            `).join('');
+        }
+
+        function setHeroIndex(idx) {
+            heroIndex = idx;
+            renderHero();
+            resetHeroAutoplay();
+        }
+
+        function nextHero() {
+            heroIndex = (heroIndex + 1) % Math.min(mediaCatalog.length, 3);
+            renderHero();
+        }
+
+        function prevHero() {
+            heroIndex = (heroIndex - 1 + Math.min(mediaCatalog.length, 3)) % Math.min(mediaCatalog.length, 3);
+            renderHero();
+        }
+
+        function startHeroAutoplay() {
+            heroInterval = setInterval(() => nextHero(), 7000);
+        }
+
+        function resetHeroAutoplay() {
+            clearInterval(heroInterval);
+            startHeroAutoplay();
+        }
+
+        /* MEDIA CARDS & CATALOG RENDERING */
+        function createMediaCard(item) {
+            const isBookmarked = myLibrary.includes(item.id);
+            return `
+                <div class="media-card group relative bg-space-850 border border-space-700/50 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:scale-105 hover:z-30 hover:border-powder-400/80 hover:shadow-powder-glow flex-shrink-0 w-44 sm:w-52 flex flex-col justify-between">
+                    <div class="relative aspect-[2/3] overflow-hidden">
+                        <img src="${item.poster}" alt="${item.title}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-space-950 via-space-950/70 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-between p-3 z-10">
+                            <div class="flex justify-between items-center">
+                                <span class="px-2 py-0.5 rounded-full bg-powder-500/90 text-white font-bold text-[10px] uppercase tracking-wider shadow-sm">${item.type}</span>
+                                <button onclick="toggleBookmark(event, ${item.id})" class="w-7 h-7 rounded-full ${isBookmarked ? 'bg-powder-500 text-white' : 'bg-space-900/80 text-white hover:bg-powder-400'} flex items-center justify-center text-xs transition">
+                                    <i class="fa-solid ${isBookmarked ? 'fa-bookmark' : 'fa-plus'}"></i>
+                                </button>
+                            </div>
+
+                            <div class="space-y-2">
+                                <p class="text-[11px] text-space-200 line-clamp-3 leading-tight font-normal opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-75">${item.desc}</p>
+                                <button onclick="openMediaModal(${item.id})" class="w-full py-1.5 rounded-xl bg-powder-400 hover:bg-powder-300 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition shadow-powder-soft">
+                                    <i class="fa-solid fa-play text-[10px]"></i> Play Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3.5 theme-bg-card relative z-10 space-y-1.5">
+                        <p class="card-title text-xs sm:text-sm font-bold theme-text-primary min-h-[2.5rem] line-clamp-2 leading-tight group-hover:text-powder-400 transition-colors duration-300">${item.title}</p>
+                        <div class="card-meta flex items-center justify-between text-[10px] theme-text-secondary pt-1 border-t border-space-800/40">
+                            <span>${item.year}</span>
+                            <span class="text-powder-500 font-bold">★ ${item.rating}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCatalogRows() {
+            const container = document.getElementById('catalogRows');
+            if (!container) return;
+
+            const trending = mediaCatalog.filter(m => m.category === 'trending');
+            const action = mediaCatalog.filter(m => m.category === 'action');
+            const scifi = mediaCatalog.filter(m => m.category === 'scifi' || m.type === 'series');
+
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <h3 class="text-base sm:text-lg font-bold theme-text-primary text-white flex items-center gap-2">
+                        <span class="w-1.5 h-5 bg-powder-400 rounded-full inline-block"></span> Trending Now
+                    </h3>
+                    <div class="flex gap-5 sm:gap-6 overflow-x-auto pb-4 pt-2 no-scrollbar">
+                        ${trending.map(createMediaCard).join('')}
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="text-base sm:text-lg font-bold theme-text-primary text-white flex items-center gap-2">
+                        <span class="w-1.5 h-5 bg-powder-400 rounded-full inline-block"></span> Sci-Fi & Futurism
+                    </h3>
+                    <div class="flex gap-5 sm:gap-6 overflow-x-auto pb-4 pt-2 no-scrollbar">
+                        ${scifi.map(createMediaCard).join('')}
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="text-base sm:text-lg font-bold theme-text-primary text-white flex items-center gap-2">
+                        <span class="w-1.5 h-5 bg-powder-400 rounded-full inline-block"></span> Action Blockbusters
+                    </h3>
+                    <div class="flex gap-5 sm:gap-6 overflow-x-auto pb-4 pt-2 no-scrollbar">
+                        ${action.map(createMediaCard).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderFilteredCatalog(typeFilter) {
+            const container = document.getElementById('catalogRows');
+            if (!container) return;
+
+            const filtered = mediaCatalog.filter(m => m.type === typeFilter);
+            const title = typeFilter === 'movie' ? 'Movies Catalog' : 'TV Shows Catalog';
+
+            container.innerHTML = `
+                <div class="space-y-6 pt-2">
+                    <div class="flex items-center justify-between border-b border-space-800/80 pb-4">
+                        <h3 class="text-xl sm:text-2xl font-bold theme-text-primary text-white flex items-center gap-2.5">
+                            <span class="w-2 h-6 bg-powder-400 rounded-full inline-block shadow-powder-soft"></span> ${title} 
+                            <span class="text-xs px-2.5 py-0.5 rounded-full bg-space-800 text-powder-400 border border-space-700 font-mono font-medium">${filtered.length} titles</span>
+                        </h3>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6 justify-items-center sm:justify-items-stretch">
+                        ${filtered.map(item => {
+                            const isBookmarked = myLibrary.includes(item.id);
+                            return `
+                                <div class="media-card group relative bg-space-850 border border-space-700/50 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:scale-105 hover:z-30 hover:border-powder-400/80 hover:shadow-powder-glow w-full flex flex-col justify-between">
+                                    <div class="relative aspect-[2/3] overflow-hidden">
+                                        <img src="${item.poster}" alt="${item.title}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-space-950 via-space-950/70 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-between p-3 z-10">
+                                            <div class="flex justify-between items-center">
+                                                <span class="px-2 py-0.5 rounded-full bg-powder-500/90 text-white font-bold text-[10px] uppercase tracking-wider shadow-sm">${item.type}</span>
+                                                <button onclick="toggleBookmark(event, ${item.id})" class="w-7 h-7 rounded-full ${isBookmarked ? 'bg-powder-500 text-white' : 'bg-space-900/80 text-white hover:bg-powder-400'} flex items-center justify-center text-xs transition">
+                                                    <i class="fa-solid ${isBookmarked ? 'fa-bookmark' : 'fa-plus'}"></i>
+                                                </button>
+                                            </div>
+
+                                            <div class="space-y-2">
+                                                <p class="text-[11px] text-space-200 line-clamp-3 leading-tight font-normal opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-75">${item.desc}</p>
+                                                <button onclick="openMediaModal(${item.id})" class="w-full py-1.5 rounded-xl bg-powder-400 hover:bg-powder-300 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition shadow-powder-soft">
+                                                    <i class="fa-solid fa-play text-[10px]"></i> Play Now
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="p-3.5 theme-bg-card relative z-10 space-y-1.5 flex-1 flex flex-col justify-between">
+                                        <p class="card-title text-xs sm:text-sm font-bold theme-text-primary line-clamp-2 leading-tight group-hover:text-powder-400 transition-colors duration-300">${item.title}</p>
+                                        <div class="card-meta flex items-center justify-between text-[10px] theme-text-secondary pt-2 border-t border-space-800/40 mt-auto">
+                                            <span>${item.year}</span>
+                                            <span class="text-powder-400 font-bold">★ ${item.rating}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        /* LIBRARY LOGIC */
+        function toggleBookmark(event, id) {
+            if (event) event.stopPropagation();
+            if (myLibrary.includes(id)) {
+                myLibrary = myLibrary.filter(item => item !== id);
+            } else {
+                myLibrary.push(id);
+            }
+            localStorage.setItem('litestream_library', JSON.stringify(myLibrary));
+            updateLibraryCounter();
+
+            if (activeTab === 'home') renderCatalogRows();
+            else if (activeTab === 'movies') renderFilteredCatalog('movie');
+            else if (activeTab === 'series') renderFilteredCatalog('series');
+            else if (activeTab === 'library') renderLibrary();
+        }
+
+        function updateLibraryCounter() {
+            const badge = document.getElementById('libraryCounter');
+            if (badge) badge.innerText = myLibrary.length;
+        }
+
+        function renderLibrary() {
+            const grid = document.getElementById('libraryGrid');
+            const empty = document.getElementById('emptyLibrary');
+
+            if (myLibrary.length === 0) {
+                grid.classList.add('hidden');
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            grid.classList.remove('hidden');
+            empty.classList.add('hidden');
+
+            const items = mediaCatalog.filter(m => myLibrary.includes(m.id));
+            grid.innerHTML = items.map(createMediaCard).join('');
+        }
+
+        /* MEDIA DETAILS MODAL & PLAYER */
+        function openMediaModal(id) {
+            const item = mediaCatalog.find(m => m.id === id);
+            if (!item) return;
+
+            document.getElementById('modalBg').src = item.bg;
+            document.getElementById('modalTitle').innerText = item.title;
+            document.getElementById('modalType').innerText = item.type.toUpperCase();
+            document.getElementById('modalYear').innerText = item.year;
+            document.getElementById('modalRating').innerText = `★ ${item.rating}`;
+            document.getElementById('modalDesc').innerText = item.desc;
+
+            const modalPlayBtn = document.getElementById('modalPlayBtn');
+            modalPlayBtn.onclick = () => {
+                closeMediaModal();
+                openSourcesModal(item);
+            };
+
+            document.getElementById('mediaDetailModal').classList.remove('hidden');
+        }
+
+        function closeMediaModal() {
+            document.getElementById('mediaDetailModal').classList.add('hidden');
+        }
+
+        /* SOURCES SELECTION SCREEN LOGIC */
+        function openSourcesModal(item) {
+            activeMediaForStreams = item;
+            document.getElementById('sourcesPoster').src = item.poster;
+            document.getElementById('sourcesTitle').innerText = item.title;
+            document.getElementById('sourcesType').innerText = item.type.toUpperCase();
+            document.getElementById('sourcesYear').innerText = item.year;
+
+            // Reset quality filter selector
+            const qualityFilter = document.getElementById('streamQualityFilter');
+            if (qualityFilter) qualityFilter.value = 'all';
+
+            const sourcesList = document.getElementById('sourcesList');
+            const countBadge = document.getElementById('sourcesCountBadge');
+            
+            // Show loading skeleton first
+            sourcesList.innerHTML = `
+                <div class="py-12 text-center space-y-3">
+                    <i class="fa-solid fa-spinner fa-spin text-2xl text-powder-400"></i>
+                    <p class="text-xs text-space-400">Querying active add-ons for available video streams...</p>
+                </div>
+            `;
+            countBadge.innerText = 'Searching streams...';
+
+            document.getElementById('sourcesModal').classList.remove('hidden');
+
+            // Simulate add-on stream scraping
+            setTimeout(() => {
+                generateAddonSources(item);
+            }, 600);
+        }
+
+        function generateAddonSources(item) {
+            const activeAddons = installedAddons.filter(a => a.enabled);
+            const sourcesList = document.getElementById('sourcesList');
+            const countBadge = document.getElementById('sourcesCountBadge');
+
+            if (activeAddons.length === 0) {
+                currentAvailableStreams = [];
+                sourcesList.innerHTML = `
+                    <div class="py-10 text-center space-y-3 border border-dashed border-space-700 rounded-2xl p-6">
+                        <i class="fa-solid fa-plug-circle-xmark text-3xl text-rose-400"></i>
+                        <p class="text-xs text-space-300 font-bold">No Active Stream Add-ons Found</p>
+                        <p class="text-[11px] text-space-400">Please enable or install a streaming add-on in Settings -> Add-ons & Extensions to fetch stream links.</p>
+                        <button onclick="closeSourcesModal(); switchTab('settings'); switchSettingsTab('addons');" class="px-4 py-2 rounded-xl bg-powder-500 text-white text-xs font-bold shadow-powder-soft mt-2">
+                            Go to Add-ons Settings
+                        </button>
+                    </div>
+                `;
+                countBadge.innerText = '0 Streams Available';
+                return;
+            }
+
+            // Mock streams generated from active installed addons
+            const mockStreamSpecs = [
+                { quality: '4K Ultra HD', codec: 'HEVC / H.265 • HDR10', size: '14.2 GB', seeds: 184, audio: 'Dolby Atmos 7.1' },
+                { quality: '1080p Full HD', codec: 'x264 / AAC', size: '3.8 GB', seeds: 312, audio: '5.1 Surround' },
+                { quality: '720p HD', codec: 'x264', size: '1.1 GB', seeds: 64, audio: 'Stereo' },
+                { quality: '480p SD', codec: 'x264 / AAC', size: '650 MB', seeds: 32, audio: 'Stereo' }
+            ];
+
+            currentAvailableStreams = [];
+
+            activeAddons.forEach(addon => {
+                // Generate 2-3 streams per active addon
+                const streamCount = Math.floor(Math.random() * 2) + 2;
+                for (let i = 0; i < streamCount; i++) {
+                    const spec = mockStreamSpecs[i % mockStreamSpecs.length];
+                    currentAvailableStreams.push({
+                        addonName: addon.name,
+                        addonIcon: addon.icon || 'fa-bolt',
+                        quality: spec.quality,
+                        codec: spec.codec,
+                        size: spec.size,
+                        seeds: spec.seeds + Math.floor(Math.random() * 50),
+                        audio: spec.audio
+                    });
+                }
+            });
+
+            filterAndRenderStreams();
+        }
+
+        function filterAndRenderStreams() {
+            const sourcesList = document.getElementById('sourcesList');
+            const countBadge = document.getElementById('sourcesCountBadge');
+            const filterValue = document.getElementById('streamQualityFilter')?.value || 'all';
+
+            let filteredStreams = currentAvailableStreams;
+
+            if (filterValue === '4k') {
+                filteredStreams = currentAvailableStreams.filter(s => s.quality.toLowerCase().includes('4k'));
+            } else if (filterValue === '1080p') {
+                filteredStreams = currentAvailableStreams.filter(s => s.quality.toLowerCase().includes('1080p'));
+            } else if (filterValue === '720p') {
+                filteredStreams = currentAvailableStreams.filter(s => s.quality.toLowerCase().includes('720p'));
+            } else if (filterValue === 'others') {
+                filteredStreams = currentAvailableStreams.filter(s => 
+                    !s.quality.toLowerCase().includes('4k') && 
+                    !s.quality.toLowerCase().includes('1080p') && 
+                    !s.quality.toLowerCase().includes('720p')
+                );
+            }
+
+            countBadge.innerText = `${filteredStreams.length} Streams Found`;
+
+            if (filteredStreams.length === 0) {
+                sourcesList.innerHTML = `
+                    <div class="py-10 text-center space-y-2 border border-dashed border-space-800 rounded-2xl p-6">
+                        <i class="fa-solid fa-filter text-2xl text-space-500"></i>
+                        <p class="text-xs text-space-300 font-bold">No streams match the selected quality filter.</p>
+                        <p class="text-[11px] text-space-400">Try switching the quality selector to "All Qualities".</p>
+                    </div>
+                `;
+                return;
+            }
+
+            sourcesList.innerHTML = filteredStreams.map((stream) => `
+                <div onclick="selectStreamSource('${stream.addonName}', '${stream.quality}', '${stream.codec}')" class="group cursor-pointer p-4 rounded-2xl bg-space-850 hover:bg-space-800 border border-space-700/60 hover:border-powder-400 transition-all shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="flex items-center gap-3.5 min-w-0">
+                        <div class="w-10 h-10 rounded-xl bg-powder-500/10 text-powder-400 border border-powder-500/30 flex items-center justify-center text-base shrink-0 group-hover:scale-105 group-hover:bg-powder-500 group-hover:text-white transition">
+                            <i class="fa-solid ${stream.addonIcon}"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="text-xs sm:text-sm font-bold text-white group-hover:text-powder-300 transition truncate">${stream.addonName}</span>
+                                <span class="px-2 py-0.2 rounded bg-space-700 text-powder-300 text-[10px] font-mono font-bold">${stream.quality}</span>
+                                <span class="text-[10px] text-emerald-400 font-semibold flex items-center gap-1"><i class="fa-solid fa-arrow-up text-[9px]"></i> ${stream.seeds} seeds</span>
+                            </div>
+                            <p class="text-[11px] text-space-400 truncate mt-0.5">${stream.codec} • ${stream.audio} • ${stream.size}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 shrink-0 self-end sm:self-center">
+                        <button class="px-4 py-2 rounded-xl bg-space-800 group-hover:bg-gradient-to-r group-hover:from-powder-400 group-hover:to-powder-600 text-white font-bold text-xs transition flex items-center gap-1.5 shadow-powder-soft">
+                            <i class="fa-solid fa-play text-[10px]"></i> Play
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectStreamSource(provider, quality, specs) {
+            closeSourcesModal();
+            if (activeMediaForStreams) {
+                document.getElementById('playerTitle').innerText = activeMediaForStreams.title;
+                document.getElementById('playerSubtitle').innerText = `${quality} • ${specs}`;
+                document.getElementById('playerStreamSourceInfo').innerText = `Source Provider: ${provider} (${quality})`;
+                document.getElementById('videoPlayerOverlay').classList.remove('hidden');
+            }
+        }
+
+        function closeSourcesModal() {
+            document.getElementById('sourcesModal').classList.add('hidden');
+        }
+
+        function startVideoPlayer(item) {
+            openSourcesModal(item);
+        }
+
+        function closeVideoPlayer() {
+            document.getElementById('videoPlayerOverlay').classList.add('hidden');
+        }
+
+        /* SEARCH OVERLAY */
+        function openSearchOverlay() {
+            document.getElementById('fullscreenSearchOverlay').classList.remove('hidden');
+            document.getElementById('fullscreenSearchInput').focus();
+        }
+
+        function closeSearchOverlay() {
+            document.getElementById('fullscreenSearchOverlay').classList.add('hidden');
+        }
+
+        function handleSearchInput(val) {
+            const resultsContainer = document.getElementById('searchResultsGrid');
+            const term = val.trim().toLowerCase();
+
+            if (!term) {
+                resultsContainer.innerHTML = '<div class="col-span-full py-12 text-center text-space-400 text-sm">Type title, genre, or keyword to search...</div>';
+                return;
+            }
+
+            const matched = mediaCatalog.filter(m => 
+                m.title.toLowerCase().includes(term) || 
+                m.desc.toLowerCase().includes(term) || 
+                m.category.toLowerCase().includes(term)
+            );
+
+            if (matched.length === 0) {
+                resultsContainer.innerHTML = '<div class="col-span-full py-12 text-center text-space-400 text-sm">No streaming titles matched your query.</div>';
+                return;
+            }
+
+            resultsContainer.innerHTML = matched.map(createMediaCard).join('');
+        }
+
+        /* THEMES MANAGEMENT */
+        function setTheme(theme) {
+            currentTheme = theme;
+            localStorage.setItem('litestream_theme', theme);
+            document.body.className = `theme-${theme} font-${currentFont} transition-colors duration-300 min-h-screen flex flex-col`;
+            
+            // Re-render components that rely on theme-dependent contrast
+            if (activeTab === 'home') renderCatalogRows();
+            else if (activeTab === 'movies') renderFilteredCatalog('movie');
+            else if (activeTab === 'series') renderFilteredCatalog('series');
+            else if (activeTab === 'library') renderLibrary();
+        }
+    </script>
+</body>
+</html>
